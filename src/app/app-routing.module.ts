@@ -11,7 +11,7 @@ const routes: Routes = [
     children: [
       {
         path: '',
-        redirectTo: './ui-components', // Redirige al componente de login cuando se accede a '/'
+        redirectTo: './authentication/login', // Redirige al componente de login cuando se accede a '/'
         pathMatch: 'full', // Asegura que solo se redirija si la ruta es exactamente igual a ''
       },
       {

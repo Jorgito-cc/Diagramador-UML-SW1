@@ -10,7 +10,7 @@ export class UsersService {
   constructor(private http: HttpClient) { }
 
   async login(email:string, password:string):Promise<any>{
-    const url = `${this.BASE_URL}/auth/login`;
+    const url = `${this.BASE_URL}/api/auth/login`;
     try {
       const response = await this.http.post<any>(url, { email, password }).toPromise();
       return response;
@@ -20,7 +20,7 @@ export class UsersService {
   }
 
   async register(userData:any, token:string):Promise<any>{
-    const url = `${this.BASE_URL}/auth/register`;
+    const url = `${this.BASE_URL}/api/auth/register`;
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`
     });
@@ -33,7 +33,7 @@ export class UsersService {
   }
 
   async getAllUsers(token:string):Promise<any>{
-    const url = `${this.BASE_URL}/admin/get-all-users`;
+    const url = `${this.BASE_URL}/api/users/me`;
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`
     });
@@ -46,7 +46,7 @@ export class UsersService {
   }
 
   async getYourProfile(token:string):Promise<any>{
-    const url = `${this.BASE_URL}/adminuser/get-profile`;
+    const url = `${this.BASE_URL}/api/users/me`;
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`
     });
@@ -70,7 +70,7 @@ export class UsersService {
       throw error;
     }
   }
-
+/* dasdfasdf */
   async deleteUser(userId: string, token:string):Promise<any>{
     const url = `${this.BASE_URL}/admin/delete/${userId}`;
     const headers = new HttpHeaders({

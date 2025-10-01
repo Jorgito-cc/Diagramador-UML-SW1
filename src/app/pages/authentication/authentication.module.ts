@@ -17,7 +17,6 @@ import { AuthenticationRoutes } from './authentication.routing';
 import { AppSideLoginComponent } from './login/login.component';
 import { AppSideRegisterComponent } from './register/register.component';
 import { AppSideProfileComponent } from './profile/profile.component';
-import { ActualizarComponent } from './actualizar/actualizar.component';
 
 @NgModule({
   imports: [
@@ -36,7 +35,6 @@ import { ActualizarComponent } from './actualizar/actualizar.component';
     AppSideLoginComponent,
     AppSideRegisterComponent,
     AppSideProfileComponent,
-    ActualizarComponent,
   ],
 })
 export class AuthenticationModule {}

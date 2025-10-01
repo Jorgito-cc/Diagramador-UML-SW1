@@ -10,43 +10,6 @@
     </button>
   </section>
 
-  <!-- Login centrado -->
-  <section class="login-section d-flex justify-content-center align-items-center">
-    <div class="login-box">
-      <mat-card class="login-card text-center">
-        <mat-card-content>
-         <!--  <img src="assets/images/logos/favicon.png" class="logo mb-3" alt="logo" /> -->
-          <h4 class="fw-bold mb-4 text-gold">Accede a tu cuenta</h4>
-
-          <form (submit)="handleSubmit()">
-            <p *ngIf="errorMessage" class="error-message text-danger text-center">{{errorMessage}}</p>
-
-            <mat-form-field appearance="outline" class="w-100 mb-3" color="primary">
-              <mat-label>Email</mat-label>
-              <input matInput [(ngModel)]="email" name="email" />
-            </mat-form-field>
-
-            <mat-form-field appearance="outline" class="w-100 mb-3" color="primary">
-              <mat-label>Contraseña</mat-label>
-              <input matInput type="password" [(ngModel)]="password" name="password" />
-            </mat-form-field>
-
-         <!--    <div class="d-flex justify-content-between align-items-center mb-3">
-              <mat-checkbox color="primary">Recordar</mat-checkbox>
-              <a href="#" class="small">¿Olvidaste tu contraseña?</a>
-            </div> -->
-
-            <button mat-flat-button class="btn-gold w-100 mb-3">Iniciar sesión</button>
-          </form>
-
-          <div>
-            <span>¿Nuevo aquí?</span>
-            <a [routerLink]="['/authentication/register']" class="fw-bold text-gold"> Regístrate</a>
-          </div>
-        </mat-card-content>
-      </mat-card>
-    </div>
-  </section>
 
   <!-- Funcionalidades -->
   <section class="container py-5">

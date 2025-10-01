@@ -10,7 +10,7 @@ const routes: Routes = [
     component: BlankComponent,
     children: [
       {
-        path: '',
+        path: 'dashboard',
         redirectTo: './dashboard', // Redirige al componente de login cuando se accede a '/'
         pathMatch: 'full', // Asegura que solo se redirija si la ruta es exactamente igual a ''
       },

@@ -23,8 +23,7 @@ import { HeaderComponent } from './layouts/full/header/header.component';
 import { BrandingComponent } from './layouts/full/sidebar/branding.component';
 import { AppNavItemComponent } from './layouts/full/sidebar/nav-item/nav-item.component';
 import { MaterialModule } from './material.module';
-import { AppSideRegisterComponent } from './pages/authentication/register/register.component';
-import { AppSideLoginComponent } from './pages/authentication/login/login.component';
+
 
 @NgModule({
   declarations: [
@@ -35,8 +34,7 @@ import { AppSideLoginComponent } from './pages/authentication/login/login.compon
     HeaderComponent,
     BrandingComponent,
     AppNavItemComponent,
-       AppSideLoginComponent,   // 👈 login
-    AppSideRegisterComponent, // 👈 register
+
 
 
 

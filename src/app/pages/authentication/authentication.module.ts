@@ -35,6 +35,7 @@ import { AppSideProfileComponent } from './profile/profile.component';
     AppSideLoginComponent,
     AppSideRegisterComponent,
     AppSideProfileComponent,
+  
   ],
 })
 export class AuthenticationModule {}

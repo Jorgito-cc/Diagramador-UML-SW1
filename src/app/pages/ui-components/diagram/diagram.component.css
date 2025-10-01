@@ -1,8 +1,40 @@
-input[type="text"] {
-  border: 1px solid #ccc;
-  padding: 2px;
-  font-size: 12px;
-  font-family: sans-serif;
-  background-color: white;
-  text-align: center;
+/* Gradiente principal */
+.bg-gradient-primary {
+  background: linear-gradient(135deg, #4f46e5, #3b82f6);
 }
+
+/* Botones suaves */
+.toolbar .btn {
+  transition: all 0.3s ease-in-out;
+}
+.toolbar .btn:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+}
+
+/* Stencil con gradiente */
+.stencil-container {
+  background: linear-gradient(180deg, #1e293b, #334155);
+  border: none;
+}
+
+/* Inspector */
+.inspector-container {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+}
+
+/* Paper (canvas) */
+.paper-container {
+  border: 1px dashed #e2e8f0;
+  background: repeating-linear-gradient(
+      45deg,
+      #f9fafb,
+      #f9fafb 10px,
+      #f3f4f6 10px,
+      #f3f4f6 20px
+  );
+}
+
+/* Animaciones usando animate.css */
+@import url("https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css");

@@ -8,7 +8,7 @@
   <!-- Vertical Sidebar -->
   <!-- ============================================================== -->
 
-  <mat-sidenav
+<mat-sidenav
     #leftsidenav
     [mode]="isOver ? 'over' : 'side'"
     [opened]="!isOver"
@@ -26,17 +26,17 @@
     <!-- VerticalHeader -->
     <!-- ============================================================== -->
 
-    <app-header
-      [showToggle]="!isOver"
-      (toggleCollapsed)="toggleCollapsed()"
-      (toggleMobileNav)="sidenav.toggle()"
-    ></app-header>
 
 
       <!-- ============================================================== -->
       <!-- Outlet -->
       <!-- ============================================================== -->
-      <router-outlet></router-outlet>
-
+    <!--   <router-outlet></router-outlet> -->
+<!-- Escucha el componente activado -->
+    <router-outlet
+      (activate)="onRouteActivate($event)"
+      (deactivate)="onRouteDeactivate($event)">
+    </router-outlet>
   </mat-sidenav-content>
 </mat-sidenav-container>
+<!-- full conponete html  -->

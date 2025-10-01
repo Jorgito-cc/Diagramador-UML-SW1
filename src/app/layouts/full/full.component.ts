@@ -10,7 +10,7 @@ const MONITOR_VIEW = 'screen and (min-width: 1024px)';
 @Component({
   selector: 'app-full',
   templateUrl: './full.component.html',
-  styleUrls: [],
+    styleUrls: ['./full.component.css'],
 })
 export class FullComponent implements OnInit {
 
@@ -19,6 +19,8 @@ export class FullComponent implements OnInit {
 
   //get options from service
   private layoutChangesSubscription = Subscription.EMPTY;
+ private diagramToggleSub?: Subscription;
+
   private isMobileScreen = false;
   private isContentWidthFixed = true;
   private isCollapsedWidthFixed = false;
@@ -45,8 +47,25 @@ export class FullComponent implements OnInit {
 
   ngOnDestroy() {
     this.layoutChangesSubscription.unsubscribe();
+    this.diagramToggleSub?.unsubscribe();
+  }
+  // ------- router-outlet hooks -------
+  onRouteActivate(component: any) {
+    // Si el componente activado (p.ej. DiagramComponent) expone @Output() toggleSidebar,
+    // nos suscribimos y lo conectamos al sidenav del layout.
+    if (component?.toggleSidebar?.subscribe instanceof Function) {
+      this.diagramToggleSub?.unsubscribe();
+      this.diagramToggleSub = component.toggleSidebar.subscribe(() => {
+        this.sidenav?.toggle(); // abre/cierra el menú izquierdo
+      });
+    }
   }
 
+  onRouteDeactivate(_: any) {
+    this.diagramToggleSub?.unsubscribe();
+    this.diagramToggleSub = undefined;
+  }
+  // -----------------------------------
   toggleCollapsed() {
     this.isContentWidthFixed = false;
   }

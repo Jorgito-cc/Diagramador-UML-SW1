@@ -1,0 +1,100 @@
+/* ===== Tokens ===== */
+:root{
+  --sb-w: 280px;
+  --sb-r: 16px;
+  --sb-gap: .8rem;
+
+  /* Gris plomo moderno */
+  --sb-grad: linear-gradient(160deg, #4b5563 0%, #374151 60%, #1f2937 100%);
+  --sb-card: rgba(255,255,255,.12);
+  --sb-stroke: rgba(255,255,255,.18);
+  --sb-text: #f9fafb;
+  --sb-text-muted: #d1d5db;
+  --sb-active-bg: rgba(255,255,255,.16);
+  --sb-chip: #437fc7;
+}
+
+/* Contenedor del sidebar */
+.flex-layout.sb-surface{
+  width: var(--sb-w);
+  min-width: var(--sb-w);
+  height: 100%;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: var(--sb-gap);
+  padding: var(--sb-gap);
+  background: var(--sb-grad);        /* << plomo */
+  border-right: 1px solid var(--sb-stroke);
+  color: var(--sb-text);
+  position: relative;
+  overflow: hidden;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.12),
+              0 12px 30px rgba(15,23,42,.15);
+}
+
+/* Branding (tu <app-branding>) */
+.bg-primary{
+  border-radius: var(--sb-r);
+  background: var(--sb-card) !important;
+  border: 1px solid var(--sb-stroke);
+  backdrop-filter: blur(8px);
+  padding: .8rem .95rem;
+  display: flex;
+  align-items: center;
+  gap: .65rem;
+  color: var(--sb-text);
+  box-shadow: 0 8px 16px rgba(0,0,0,.25);
+}
+
+/* Lista */
+.sidebar-list{
+  margin: 0;
+  padding: .4rem;
+  border-radius: var(--sb-r);
+  background: var(--sb-card);
+  border: 1px solid var(--sb-stroke);
+  backdrop-filter: blur(8px);
+  overflow: auto;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.1);
+}
+
+/* Scrollbar sutil */
+.sidebar-list::-webkit-scrollbar{ width: 8px; }
+.sidebar-list::-webkit-scrollbar-thumb{
+  background: rgba(255,255,255,.28); border-radius: 999px;
+}
+
+/* Ítems (Angular Material usa MDC internamente) */
+:host ::ng-deep .sidebar-list .mdc-list-item,
+:host ::ng-deep .sidebar-list .mat-mdc-list-item{
+  margin: .2rem 0;
+  border-radius: 12px;
+  color: var(--sb-text);
+  transition: transform .14s ease, background .14s ease, box-shadow .14s ease;
+}
+
+:host ::ng-deep .sidebar-list .mdc-list-item:hover,
+:host ::ng-deep .sidebar-list .mat-mdc-list-item:hover{
+  transform: translateX(3px);
+  background: rgba(255,255,255,.08);
+  box-shadow: 0 10px 20px rgba(0,0,0,.2);
+}
+
+/* Activo */
+:host ::ng-deep .sidebar-list .mdc-list-item--activated,
+:host ::ng-deep .sidebar-list .mat-mdc-list-item--activated,
+:host ::ng-deep .sidebar-list a.router-link-active{
+  background: var(--sb-active-bg) !important;
+  color: #fff !important;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.12),
+              0 14px 26px rgba(0,0,0,.25);
+}
+
+/* Badges */
+:host ::ng-deep .sidebar-list .badge,
+:host ::ng-deep .sidebar-list .mat-badge{
+  margin-left: auto;
+  background: var(--sb-chip);
+  color:#fff;
+  border-radius:999px;
+}

@@ -1,51 +1,70 @@
-
-<!-- Mostrar el enlace de la sesión si existe -->
-<div *ngIf="sessionLink" class="alert alert-info d-flex justify-content-between align-items-center">
+<!-- Alerta sesión -->
+<div *ngIf="sessionLink"
+     class="alert alert-info d-flex justify-content-between align-items-center shadow-sm rounded-pill small mb-3 animate__animated animate__fadeInDown">
   <div>
     <strong>Sesión creada: </strong>
-    <a [href]="sessionLink" class="text-decoration-none">{{ sessionLink }}</a>
+    <a [href]="sessionLink" class="fw-semibold text-decoration-none">{{ sessionLink }}</a>
   </div>
-  <!-- Botón para copiar el enlace -->
-  <button class="btn btn-outline-primary btn-sm ml-3" (click)="copyLink()">
-    <i class="fas fa-copy"></i> Copiar enlace
+  <button class="btn btn-outline-light btn-sm rounded-pill px-3" (click)="copyLink()">
+    <i class="bi bi-clipboard"></i> Copiar
   </button>
 </div>
 
 <div class="joint-app joint-theme-modern">
-  <div class="app-header d-flex align-items-center justify-content-between">
-    <div class="app-title">
-      <h1 class="m-0">Diagramador</h1>
-    </div>
-    <div class="toolbar d-flex gap-3">
-      <button class="btn btn-primary d-flex align-items-center" (click)="createSession()">
-        <i class="fas fa-plus-circle mr-2"></i> Crear Sesión
+  <!-- HEADER -->
+  <div class="app-header d-flex align-items-center justify-content-between shadow-lg rounded-4 px-4 py-3 bg-gradient-primary">
+
+        <!-- BOTÓN SOLO -->
+    <button class="btn btn-light btn-icon rounded-circle me-2 shadow-sm"
+            type="button"
+            aria-label="Abrir menú"
+            (click)="onToggleSidebar()">
+      <i class="bi bi-list"></i>
+    </button>
+ <!--    <div class="app-title d-flex align-items-center gap-2">
+      <h1 class="m-0 fw-bold text-white animate__animated animate__fadeInLeft">Diagramador</h1>
+      <span class="badge bg-light text-primary rounded-pill shadow-sm">Examen</span>
+    </div> -->
+    <div class="toolbar d-flex gap-2">
+      <button class="btn btn-success rounded-pill shadow-sm px-4" (click)="createSession()">
+        <i class="bi bi-plus-circle me-1"></i> Crear Sesión
       </button>
-      <button mat-raised-button color="accent" (click)="sendDiagramWithContext()">Generar Entidades</button>
-      <button mat-raised-button color="warn" (click)="exportDiagram()">Exportar Diagrama</button>
-      <button mat-raised-button color="primary" (click)="createLinkWithIntermediateClass()">Crear Línea con Clase
-        Intermedia</button>
+      <button class="btn btn-info text-white rounded-pill shadow-sm px-4" (click)="sendDiagramWithContext()">
+        <i class="bi bi-magic me-1"></i> Generar Demo
+      </button>
+      <button class="btn btn-warning rounded-pill shadow-sm px-4" (click)="exportDiagram()">
+        <i class="bi bi-box-arrow-down me-1"></i> Exportar
+      </button>
+      <button class="btn btn-outline-light rounded-pill shadow-sm px-4" (click)="createLinkWithIntermediateClass()">
+        <i class="bi bi-diagram-3 me-1"></i> Clase Intermedia 'mucho a muchos'
+      </button>
     </div>
   </div>
 
+  <!-- CUERPO -->
   <div class="app-body d-flex flex-column mt-3">
-
-    <div class="d-flex flex-grow-1 mt-4">
-      <div class="stencil-container mr-3 p-3 bg-white shadow-sm rounded">
-        <h3 class="mb-3">Herramientas</h3>
-        <!-- Aquí podrías añadir las herramientas para tu stencil -->
+    <div class="d-flex flex-grow-1 mt-4 gap-3">
+      <!-- STENCIL -->
+      <div class="stencil-container p-3 rounded-4 shadow bg-dark text-white animate__animated animate__fadeInLeft">
+        <h3 class="mb-3 fw-semibold">Herramientas</h3>
+        <!-- Aquí el stencil -->
       </div>
 
-      <div class="paper-container flex-grow-1 p-3 bg-white shadow-sm rounded">
+      <!-- CANVAS -->
+      <div class="paper-container flex-grow-1 p-3 bg-white shadow rounded-4 animate__animated animate__fadeIn">
         <!-- Aquí estará el diagrama -->
       </div>
 
-      <div class="inspector-container hidden p-3 bg-white shadow-sm rounded ml-3">
-        <!-- Aquí estará el inspector -->
+      <!-- INSPECTOR -->
+      <div class="inspector-container p-3 bg-light shadow rounded-4 animate__animated animate__fadeInRight">
+        <h5 class="fw-semibold text-secondary">Inspector</h5>
+        <!-- Inspector -->
       </div>
     </div>
   </div>
 
-  <div class="navigator-container mt-3 bg-light p-2 rounded shadow-sm">
+  <!-- NAVEGADOR -->
+  <div class="navigator-container mt-3 bg-white p-3 rounded-4 shadow-sm animate__animated animate__fadeInUp">
     <!-- Aquí estará el navegador -->
   </div>
 </div>

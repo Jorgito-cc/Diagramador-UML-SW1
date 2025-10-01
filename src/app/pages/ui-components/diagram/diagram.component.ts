@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit } from '@angular/core';
+import { Component, ElementRef, EventEmitter, OnInit, Output } from '@angular/core';
 import { StencilService } from 'src/services/stencil-service';
 import { ToolbarService } from 'src/services/toolbar-service';
 import { InspectorService } from 'src/services/inspector-service';
@@ -17,10 +17,32 @@ import { saveAs } from 'file-saver';
 
 @Component({
   selector: 'app-root',
-  templateUrl: './diagram.component.html'
+  templateUrl: './diagram.component.html',
+  styleUrls: ['./diagram.component.css'],
+
 })
 export class DiagramComponent implements OnInit {
+    @Output() toggleSidebar = new EventEmitter<void>(); // <-- nuevo
 
+showInspector = true;   // inspector visible por defecto
+ isHeaderOpen = true;
+  showTools = true;            // <- estado del sidebar derecho
+  onToggleSidebar() {               // <-- llamado por el botón
+    this.toggleSidebar.emit();
+  }
+  toggleTools() {      // <— NUEVO
+    this.showTools = !this.showTools;
+
+  }
+toggleHeader() {
+    this.isHeaderOpen = !this.isHeaderOpen;
+    // Opcional: si quieres recalcular layout de JointJS cuando cambia la altura:
+    // setTimeout(() => this.rappid?.paper?.fitToContent({ useModelGeometry: true }), 0);
+  }
+
+   toggleInspector() {
+    this.showInspector = !this.showInspector;
+  }
 
   public apiResponse: string = ''; // To store the ChatGPT response
 
@@ -43,7 +65,8 @@ export class DiagramComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.socket = io('http://localhost:3000');    // Reemplaza con tu URL de WebSocket    this.inspectorService = new InspectorService();
+    //this.socket = io('http://localhost:3000');    // Reemplaza con tu URL de WebSocket    this.inspectorService = new InspectorService();
+    this.socket = io('https://socket-diagramador-uml-production.up.railway.app');
     this.route.queryParams.subscribe(params => {
       this.sessionId = params['sessionId'];
       if (this.sessionId) {

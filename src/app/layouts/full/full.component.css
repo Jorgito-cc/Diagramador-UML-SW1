@@ -1,0 +1,154 @@
+/* ===== Tokens ===== */
+:root{
+  --sb-w: 280px;
+  --sb-r: 16px;
+  --sb-gap: .8rem;
+
+  --sb-grad: linear-gradient(160deg,#2563eb 0%,#7c3aed 55%,#06b6d4 100%);
+  --sb-card: rgba(255,255,255,.14);
+  --sb-stroke: rgba(255,255,255,.22);
+  --sb-text: #0b1220;
+  --sb-text-muted: #0b1220b3;
+  --sb-active-bg: rgba(255,255,255,.9);
+  --sb-chip: #0ea5e9;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --sb-card: rgba(255,255,255,.08);
+    --sb-stroke: rgba(255,255,255,.14);
+    --sb-text: #e5e7eb;
+    --sb-text-muted: #e5e7ebb3;
+    --sb-active-bg: rgba(255,255,255,.14);
+  }
+}
+
+/* ===== Drawer (fuera del app-sidebar, por si quieres estilizar el contenedor) */
+.sidebarNav.mat-drawer{
+  width: var(--sb-w) !important;
+  max-width: var(--sb-w);
+  background: transparent; /* dejamos el fondo al skin interno */
+  border-right: none;
+}
+
+/* ===== Contenedor del sidebar (TU ESTRUCTURA: .flex-layout.bg-info) */
+.sidebarNav app-sidebar .flex-layout.bg-info{
+  width: 100%;
+  min-width: var(--sb-w);
+  height: 100%;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: var(--sb-gap);
+  padding: var(--sb-gap);
+  background: var(--sb-grad);
+  color: var(--sb-text);
+  position: relative;
+  overflow: hidden;
+  border-right: 1px solid var(--sb-stroke);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.18),
+              0 12px 32px rgba(2,6,23,.15);
+}
+
+/* Branding (tu <app-branding>) */
+.sidebarNav app-sidebar .bg-primary{
+  border-radius: var(--sb-r);
+  background: var(--sb-card) !important;
+  border: 1px solid var(--sb-stroke);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: .8rem .95rem;
+  display: flex; align-items: center; gap: .65rem;
+  color: var(--sb-text);
+  box-shadow: 0 10px 22px rgba(2,6,23,.12);
+}
+
+/* Cajón libre inferior (tu .p-24) */
+.sidebarNav app-sidebar .p-24{
+  border-radius: var(--sb-r);
+  background: var(--sb-card);
+  border: 1px solid var(--sb-stroke);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  min-height: 18px;
+}
+
+/* ===== Lista (Angular Material) ===== */
+.sidebarNav app-sidebar .sidebar-list{
+  margin: 0; padding: .4rem;
+  border-radius: var(--sb-r);
+  background: var(--sb-card);
+  border: 1px solid var(--sb-stroke);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  overflow: auto;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.10);
+}
+
+/* Scrollbar sutil */
+.sidebarNav app-sidebar .sidebar-list::-webkit-scrollbar{ width: 8px; }
+.sidebarNav app-sidebar .sidebar-list::-webkit-scrollbar-thumb{
+  background: rgba(255,255,255,.28); border-radius: 999px;
+}
+
+/* Ítems */
+.sidebarNav app-sidebar .sidebar-list .mat-mdc-list-item,
+.sidebarNav app-sidebar .sidebar-list .mdc-list-item{
+  position: relative;
+  margin: .2rem 0;
+  border-radius: 12px;
+  padding-inline: .55rem !important;
+  color: var(--sb-text);
+  transition: transform .14s ease, box-shadow .14s ease;
+  overflow: hidden;
+}
+
+/* Halo/ink al hover */
+.sidebarNav app-sidebar .sidebar-list .mat-mdc-list-item::before,
+.sidebarNav app-sidebar .sidebar-list .mdc-list-item::before{
+  content: ''; position: absolute; inset: 0;
+  background: rgba(255,255,255,.55);
+  opacity: 0; transition: opacity .16s ease; pointer-events: none;
+}
+.sidebarNav app-sidebar .sidebar-list .mat-mdc-list-item:hover,
+.sidebarNav app-sidebar .sidebar-list .mdc-list-item:hover{
+  transform: translateX(3px);
+  box-shadow: 0 12px 22px rgba(2,6,23,.12);
+}
+.sidebarNav app-sidebar .sidebar-list .mat-mdc-list-item:hover::before,
+.sidebarNav app-sidebar .sidebar-list .mdc-list-item:hover::before{ opacity: .95; }
+
+/* Icono y texto */
+.sidebarNav app-sidebar .sidebar-list .mdc-list-item__start,
+.sidebarNav app-sidebar .sidebar-list .mat-mdc-list-item-icon{
+  color: var(--sb-text);
+  opacity: .95; font-size: 1.06rem; margin-right: .55rem;
+}
+.sidebarNav app-sidebar .sidebar-list .mdc-list-item__primary-text,
+.sidebarNav app-sidebar .sidebar-list .mat-mdc-list-item-text{
+  color: var(--sb-text);
+  overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
+}
+
+/* Activo (routerLinkActive/activated) */
+.sidebarNav app-sidebar .sidebar-list .mat-mdc-list-item--activated,
+.sidebarNav app-sidebar .sidebar-list .mdc-list-item--activated,
+.sidebarNav app-sidebar .sidebar-list a.router-link-active,
+.sidebarNav app-sidebar .sidebar-list a.is-active{
+  background: var(--sb-active-bg) !important;
+  color: #111827 !important;
+  box-shadow: inset 0 0 0 1px rgba(17,24,39,.06),
+              0 16px 28px rgba(2,6,23,.18);
+  transform: translateX(0);
+}
+
+/* Badge/chip a la derecha */
+.sidebarNav app-sidebar .sidebar-list .mdc-list-item .mat-badge,
+.sidebarNav app-sidebar .sidebar-list .mdc-list-item .badge{
+  margin-left: auto; background: var(--sb-chip); color:#fff; border-radius:999px;
+}
+
+/* Título de sección (si lo usas) */
+.sidebarNav app-sidebar .sidebar-list .sb-section-title{
+  font-size: .72rem; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--sb-text-muted);
+  padding: .35rem .45rem; margin: .25rem .25rem .4rem;
+}

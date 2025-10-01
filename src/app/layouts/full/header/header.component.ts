@@ -28,7 +28,7 @@ export class HeaderComponent {
     profileInfo: any;
     errorMessage: string = ''
 
-  async ngOnInit() {
+/*   async ngOnInit() {
     try {
       const token = localStorage.getItem('token')
       if(!token){
@@ -40,7 +40,7 @@ export class HeaderComponent {
       this.showError(error.message)
     }
 
-  }
+  } */
   logout(): void {
     this.userService.logOut();
     this.router.navigate(['/authentication/login'])

@@ -1,0 +1,57 @@
+/* HERO */
+.hero {
+  background: linear-gradient(135deg, #0d47a1, #42a5f5);
+  height: 70vh;
+  padding: 2rem;
+}
+.hero h1 {
+  font-size: 3rem;
+}
+.btn-gold {
+  background: linear-gradient(45deg, #FFD700, #FFC107);
+  color: #000;
+  font-weight: bold;
+  border-radius: 8px;
+  transition: transform 0.2s;
+}
+.btn-gold:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 15px rgba(255, 215, 0, 0.6);
+}
+
+/* LOGIN */
+.login-section {
+  min-height: 80vh;
+  background: #f5f7fa;
+  padding: 3rem 1rem;
+}
+.login-box {
+  width: 100%;
+  max-width: 420px;
+}
+.login-card {
+  border-radius: 20px;
+  padding: 2rem;
+  border: 2px solid #FFD700;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  background: #fff;
+}
+.logo {
+  width: 70px;
+}
+.text-gold {
+  color: #FFD700;
+}
+
+/* FUNCIONALIDADES */
+.feature-card {
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+  padding: 2rem 1rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.feature-card:hover {
+  transform: translateY(-7px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+}

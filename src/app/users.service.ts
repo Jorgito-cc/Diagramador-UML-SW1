@@ -6,8 +6,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 })
 export class UsersService {
 
-  // private BASE_URL = "https://back-examen-production.up.railway.app";
-  private BASE_URL = "https://back-end-4cxk.onrender.com"; // Cambia esto a tu URL base
+  private BASE_URL = "https://backend-sw1-production.up.railway.app"; // Cambia esto a tu URL base
   constructor(private http: HttpClient) { }
 
   async login(email:string, password:string):Promise<any>{

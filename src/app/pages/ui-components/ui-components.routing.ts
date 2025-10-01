@@ -8,7 +8,7 @@ export const UiComponentsRoutes: Routes = [
     children: [
 
       {
-        path: 'aulas',  // Nueva ruta para AulaComponent
+        path: 'examen',  // Nueva ruta para AulaComponent
         component: DiagramComponent,
       }
 

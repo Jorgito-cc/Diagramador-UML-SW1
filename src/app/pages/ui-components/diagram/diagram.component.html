@@ -38,6 +38,45 @@
       <button class="btn btn-outline-light rounded-pill shadow-sm px-4" (click)="createLinkWithIntermediateClass()">
         <i class="bi bi-diagram-3 me-1"></i> Clase Intermedia 'mucho a muchos'
       </button>
+<!-- un text area para poder escriit ala ia  -->
+
+      <!-- === IA: Generar diagrama desde prompt === -->
+<div class="position-relative">
+  <button class="btn btn-light rounded-pill shadow-sm px-3 d-flex align-items-center gap-2"
+          (click)="iaOpen = !iaOpen">
+    <i class="bi bi-robot"></i> Generar modelo
+  </button>
+
+  <div class="card border-0 shadow-lg p-3 ia-panel" *ngIf="iaOpen">
+    <strong class="mb-2 d-block">Describe tu modelo</strong>
+
+    <textarea class="form-control mb-2" rows="5"
+              [(ngModel)]="iaPrompt"
+              placeholder="Ej.: 
+Clase Usuario: id:Long, nombre:String, edad:Int
+Clase Rol: id:Long, nombre:String
+Relaciones:
+Usuario *..* Rol (muchos a muchos)">
+    </textarea>
+
+    <div class="d-flex gap-2">
+      <button class="btn btn-primary w-100" [disabled]="iaBusy || !iaPrompt?.trim()"
+              (click)="onGenerateFromPrompt()">
+        <span *ngIf="!iaBusy"><i class="bi bi-stars me-1"></i>Generar</span>
+        <span *ngIf="iaBusy" class="spinner-border spinner-border-sm me-1"></span>
+      </button>
+      <button class="btn btn-outline-secondary" type="button"
+              (click)="iaPrompt = examplePrompt()">
+        Ejemplo
+      </button>
+    </div>
+
+    <div *ngIf="iaError" class="alert alert-danger my-2 py-2 px-3">{{ iaError }}</div>
+  </div>
+</div>
+
+
+<!-- finaaaaaaaaaaaaaa -->
     </div>
   </div>
 

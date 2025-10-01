@@ -9,12 +9,14 @@ import { ThemePicker } from 'src/components/theme-picker';
 import { io } from 'socket.io-client';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as joint from '@joint/plus/joint-plus';
-import { app } from 'src/shapes/app-shapes';  // Import your app-shapes
+//import { app } from 'src/shapes/app-shapes';  // Import your app-shapes
 import { OpenAIService } from 'src/app/services/chatgpt.service';  // Importa tu servicio
 import { HttpErrorResponse } from '@angular/common/http';  // Importar para el manejo de errores HTTP
 import * as JSZip from 'jszip';
 import { saveAs } from 'file-saver';
 
+import * as appShapes from 'src/shapes/app-shapes';
+//import * as joint from '@joint/plus';
 @Component({
   selector: 'app-root',
   templateUrl: './diagram.component.html',
@@ -27,6 +29,14 @@ export class DiagramComponent implements OnInit {
 showInspector = true;   // inspector visible por defecto
  isHeaderOpen = true;
   showTools = true;            // <- estado del sidebar derecho
+/* la ia */
+iaOpen = false;
+iaPrompt = '';
+iaBusy = false;
+iaError: string | null = null;
+
+
+
   onToggleSidebar() {               // <-- llamado por el botón
     this.toggleSidebar.emit();
   }
@@ -56,7 +66,8 @@ toggleHeader() {
   private selectedElements: joint.dia.Element[] = [];  // Store selected elements
   userMessage: string = '';  // Para almacenar el mensaje del usuario
   chatGPTResponse: string = '';  // Para almacenar la respuesta de ChatGPT
-
+// guarda el namespace para usarlo en métodos
+private appNS = appShapes.app;
 
 
 
@@ -195,14 +206,16 @@ toggleHeader() {
       this.selectedElements.push(element);
     }
   }
-
   // Create the link and intermediate class
   createLinkWithIntermediateClass() {
     if (this.selectedElements.length === 2) {
       const [sourceElement, targetElement] = this.selectedElements;
 
       // Create the intermediate class (using `app.Clase`)
-      const intermediateClass = new app.Clase({
+      
+
+      const intermediateClass = new (this.appNS as any).Clase({
+
         position: {
           x: (sourceElement.position().x + targetElement.position().x) / 2,
           y: (sourceElement.position().y + targetElement.position().y) / 2
@@ -236,7 +249,8 @@ toggleHeader() {
             strokeWidth: 0,
             y: 10
           },
-          porpiedades: { text: '' },
+          propiedades: { text: '' },
+
           metodos: { text: '' }
 
         }
@@ -246,7 +260,7 @@ toggleHeader() {
       this.rappid.graph.addCell(intermediateClass);
 
       // Create links using `app.Link`
-      const link1 = new app.Link({
+      const link1 = new (this.appNS as any).Link({
         source: { id: sourceElement.id },
         target: { id: intermediateClass.id },
         attrs: {
@@ -257,7 +271,7 @@ toggleHeader() {
         }
       });
 
-      const link2 = new app.Link({
+      const link2 = new (this.appNS as any).Link({
         source: { id: intermediateClass.id },
         target: { id: targetElement.id },
         attrs: {
@@ -281,7 +295,7 @@ toggleHeader() {
   createSession() {
     this.socket.emit('create-session', (sessionId: string) => {
       this.sessionId = sessionId;
-      this.sessionLink = `${window.location.origin}/ui-components/aulas?sessionId=${sessionId}`;
+      this.sessionLink = `${window.location.origin}/ui-components/examen?sessionId=${sessionId}`;
       this.updateUrlWithSessionId(sessionId);
       this.graphInitialized = true;
     });
@@ -297,6 +311,372 @@ toggleHeader() {
       queryParamsHandling: 'merge'
     });
   }
+
+/* funciones de la oa ------------------------------------------------------------------------------------------------------------ */
+
+
+
+examplePrompt(): string {
+  return `
+Clases:
+  Producto: id:int, nombre:string, estado:boolean
+  Categoria: id:int, nombre:string
+
+Relaciones:
+  Producto *..* Categoria
+`.trim();
+}
+private buildIaSystemPrompt(userPrompt: string): string {
+  return `
+Eres un generador de modelos UML para JointJS.
+Devuelve solo JSON válido (sin texto adicional).
+
+{
+  "classes": [
+    { "name": "Usuario",
+      "attributes": [ { "name": "id", "type": "int" }, { "name": "nombre", "type": "string" } ],
+      "methods": [],
+      "position": { "x": 200, "y": 120 }
+    }
+  ],
+  "relations": [
+    { "from": "A", "to": "B", "kind": "ONE_TO_MANY" },
+    { "from": "X", "to": "Y", "kind": "MANY_TO_MANY" },
+    { "from": "C", "to": "D", "kind": "ONE_TO_ONE" }
+  ]
+}
+
+Reglas:
+- "kind" ∈ { "ONE_TO_MANY", "MANY_TO_ONE", "MANY_TO_MANY", "ONE_TO_ONE" }.
+- Para MANY_TO_MANY no crees FKs directas; crearé una clase intermedia con *Ambas* FKs.
+- Si no das "position", yo distribuiré las clases.
+
+Genera el JSON para:
+${userPrompt}
+`.trim();
+}
+
+
+/* private extractJson(text: string): any {
+  let t = (text || '').trim();
+  if (t.startsWith('```')) t = t.replace(/^```(json|JSON|xml)?/,'').trim();
+  if (t.endsWith('```'))  t = t.replace(/```$/,'').trim();
+  try { return JSON.parse(t); } catch {  }
+  const m = t.match(/\{[\s\S]*\}$/);
+  if (!m) throw new Error('No JSON object found');
+  return JSON.parse(m[0]);
+}
+
+ */
+
+
+
+
+private extractJsonFromIaResponse(resp: any): any {
+  let raw =
+    resp?.candidates?.[0]?.content?.parts?.[0]?.text ??
+    resp?.choices?.[0]?.message?.content ??
+    resp?.output_text ?? '';
+  let t = String(raw ?? '').trim();
+  if (t.startsWith('```')) {
+    t = t.replace(/^```(json|JSON|xml)?/, '').trim();
+    if (t.endsWith('```')) t = t.slice(0, -3).trim();
+  }
+  try { return JSON.parse(t); } catch {}
+  const m = t.match(/\{[\s\S]*\}/);
+  if (m) return JSON.parse(m[0]);
+  throw new Error('No JSON object found');
+}
+
+
+
+private propsToMultiline(attrs: { name: string; type: string }[] = []): string {
+  return attrs.map(a => `${a.name}:${a.type}`).join('\n');
+}
+
+private nextGridPos = { x: 120, y: 120 };
+private autoPos(): { x: number; y: number } {
+  const p = { ...this.nextGridPos };
+  this.nextGridPos.x += 220;
+  if (this.nextGridPos.x > 900) { this.nextGridPos.x = 120; this.nextGridPos.y += 180; }
+  return p;
+}
+
+private uniqueName(base: string): string {
+  const existing = new Set(
+    this.rappid.graph.getElements().map((el: any) => el.attr('nombreclase/text'))
+  );
+  if (!existing.has(base)) return base;
+  let i = 2;
+  while (existing.has(`${base}${i}`)) i++;
+  return `${base}${i}`;
+}
+/* analizar todo  */
+/* private upsertClassByName(
+  name: string,
+  attrs?: { propText?: string; methText?: string },
+  pos?: { x:number; y:number }
+) {
+  const found = this.rappid.graph.getElements()
+    .find((el: any) => el.attr('nombreclase/text') === name) as any;
+  if (found) return found;
+
+  const p = pos ?? this.autoPos();
+  const node = new this.appNS.Clase({
+    position: p,
+    size: { width: 160, height: 130 },
+    attrs: {
+      root: { dataTooltip: 'Class' },
+      body: { fill: 'transparent', stroke: '#31d0c6', strokeWidth: 2 },
+      header: { stroke: '#31d0c6', fill: '#31d0c6', height: 20 },
+      nombreclase: { text: name, fill: '#fff', fontSize: 12, y: 10 },
+      propiedades: { text: attrs?.propText ?? '' },
+      metodos: { text: attrs?.methText ?? '' }
+    }
+  });
+  this.rappid.graph.addCell(node);
+  return node;
+}
+ */
+private addMultiplicityLabel(link: any, fromMult?: string, toMult?: string) {
+  const labels: any[] = [];
+  if (fromMult) labels.push({ position: 0.15, attrs: { text: { text: fromMult } } });
+  if (toMult)   labels.push({ position: 0.85, attrs: { text: { text: toMult   } } });
+  link.labels(labels);
+}
+
+private link(a: any, b: any, multA?: string, multB?: string) {
+  const l = new this.appNS.Link({
+    source: { id: a.id },
+    target: { id: b.id },
+    attrs: { line: { stroke: '#000', strokeWidth: 2 } }
+  });
+  this.rappid.graph.addCell(l);
+  this.addMultiplicityLabel(l, multA, multB);
+  return l;
+}
+private upsertClassByName(name: string, attrs?: any, pos?: {x:number,y:number}) {
+  const found = this.rappid.graph.getElements()
+    .find((el: any) => el.attr('nombreclase/text') === name) as any;
+  if (found) return found;
+
+  const p = pos ?? this.autoPos();
+  const node = new this.appNS.Clase({
+    position: p,
+    size: { width: 160, height: 130 },
+    attrs: {
+      root: { dataTooltip: 'Class' },
+      body: { fill: 'transparent', stroke: '#31d0c6', strokeWidth: 2 },
+      header: { stroke: '#31d0c6', fill:'#31d0c6', height: 20 },
+      nombreclase: { text: this.uniqueName(name), fill: '#fff', fontSize: 12, y: 10 },
+      propiedades: { text: attrs?.propText ?? '' },
+      metodos: { text: attrs?.methText ?? '' }
+    }
+  });
+  this.rappid.graph.addCell(node);
+  return node;
+}
+
+
+/** Normaliza una relación que puede venir como objeto o como string "A 1..* B" */
+/* private normalizeRelation(r: any): { from: string; to: string; kind: 'ONE_TO_ONE'|'ONE_TO_MANY'|'MANY_TO_ONE'|'MANY_TO_MANY' } | null {
+  if (!r) return null;
+
+  if (typeof r === 'object' && r.from && r.to) {
+    const from = String(r.from).trim();
+    const to   = String(r.to).trim();
+    const kraw = String(r.kind || '').trim().toUpperCase().replace(/\s+/g,'_');
+    let kind: any = kraw as any;
+    if (!['ONE_TO_ONE','ONE_TO_MANY','MANY_TO_ONE','MANY_TO_MANY'].includes(kind)) {
+   
+      const fm = (r.fromMult || '').trim();
+      const tm = (r.toMult || '').trim();
+      const sig = `${fm} ${tm}`.trim();
+      if (sig === '1 *') kind = 'ONE_TO_MANY';
+      else if (sig === '* 1') kind = 'MANY_TO_ONE';
+      else if (sig === '1 1') kind = 'ONE_TO_ONE';
+      else if (sig === '* *') kind = 'MANY_TO_MANY';
+      else kind = 'ONE_TO_ONE';
+    }
+    return { from, to, kind };
+  }
+
+  
+  if (typeof r === 'string') {
+    const s = r.trim().replace(/\s+/g, ' ');
+    const m = s.match(/^(.+?)\s+([*1])\.\.\.?\s*([*1])\s+(.+)$/)  // tolerante con ".." o "..."
+          || s.match(/^(.+?)\s+([*1])\.\.\s*([*1])\s+(.+)$/)
+          || s.match(/^(.+?)\s+([*1])\s*-\s*([*1])\s+(.+)$/);
+    if (m) {
+      const from = m[1].trim();
+      const a = m[2], b = m[3];
+      const to = m[4].trim();
+      let kind: any = 'ONE_TO_ONE';
+      if (a === '1' && b === '*') kind = 'ONE_TO_MANY';
+      else if (a === '*' && b === '1') kind = 'MANY_TO_ONE';
+      else if (a === '*' && b === '*') kind = 'MANY_TO_MANY';
+      return { from, to, kind };
+    }
+  }
+
+  return null;
+} */
+
+/** Dibuja una relación según el kind y agrega multiplicidades */
+private drawRelation(rel: any, byName: Map<string, any>) {
+  const A = byName.get(rel.from) ?? this.upsertClassByName(rel.from);
+  const B = byName.get(rel.to)   ?? this.upsertClassByName(rel.to);
+  const kind = String(rel.kind || '').toUpperCase();
+
+  switch (kind) {
+    case 'ONE_TO_ONE':
+      this.link(A, B, '1', '1');
+      break;
+
+    case 'ONE_TO_MANY':
+      this.link(A, B, '1', '*');
+      break;
+
+    case 'MANY_TO_ONE':
+      this.link(A, B, '*', '1');
+      break;
+
+    case 'MANY_TO_MANY': {
+      const midPos = {
+        x: Math.round((A.position().x + B.position().x) / 2),
+        y: Math.round((A.position().y + B.position().y) / 2)
+      };
+
+      const interName =
+        rel.intermediateName ||
+        `Rel_${this.slugName(rel.from)}_${this.slugName(rel.to)}`;
+
+      const fkA = this.fkFor(rel.from);
+      const fkB = this.fkFor(rel.to);
+      const fkText = `${fkA}\n${fkB}\n// PK(${fkA.split(':')[0]}, ${fkB.split(':')[0]})`;
+
+      const mid = this.upsertClassByName(interName, { propText: fkText }, midPos);
+      this.link(A, mid, '1', '*');
+      this.link(mid, B, '1', '*');
+      break;
+    }
+
+    default:
+      this.link(A, B);
+  }
+}
+
+
+
+private renderUmlJson(model: any) {
+  if (!model || !Array.isArray(model.classes)) {
+    throw new Error('JSON sin "classes".');
+  }
+
+  const byName = new Map<string, any>();
+
+  // 1) Clases
+  for (const c of model.classes) {
+    const propText = this.propsToMultiline(c.attributes);
+    const methText = Array.isArray(c.methods) ? c.methods.join('\n') : '';
+    const pos = c.position ?? this.autoPos();
+    const el = this.upsertClassByName(c.name, { propText, methText }, pos);
+    byName.set(c.name, el);
+  }
+
+  // 2) Relaciones
+  const relations: any[] = Array.isArray(model.relations) ? model.relations : [];
+  for (const rel of relations) this.drawRelation(rel, byName);
+}
+
+/* 
+onGenerateFromPrompt() {
+  if (!this.iaPrompt.trim()) return;
+  this.iaBusy = true; this.iaError = null;
+
+  const msg = this.buildIaSystemPrompt(this.iaPrompt);
+
+  // Reemplaza openAIService por tu servicio real
+  this.openAIService.sendMessageToGemini(msg).subscribe({
+    next: (resp: any) => {
+      try {
+        const raw = resp?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+        const json = this.extractJson(raw);
+        this.rappid.graph.startBatch('ia-render');
+        this.renderUmlJson(json);
+        this.rappid.graph.stopBatch('ia-render');
+        this.iaBusy = false; this.iaOpen = false;
+      } catch (e:any) {
+        console.error(e);
+        this.iaBusy = false;
+        this.iaError = 'La IA no devolvió un JSON válido.';
+      }
+    },
+    error: (e) => {
+      console.error(e);
+      this.iaBusy = false;
+      this.iaError = 'Error al llamar a Gemini.';
+    }
+  });
+}
+ */
+
+onGenerateFromPrompt() {
+  if (!this.iaPrompt.trim()) return;
+  this.iaBusy = true; this.iaError = null;
+
+  const msg = this.buildIaSystemPrompt(this.iaPrompt);
+
+  this.openAIService.sendMessageToGemini(msg).subscribe({
+    next: (resp: any) => {
+      try {
+        const json = this.extractJsonFromIaResponse(resp);
+        this.rappid.graph.startBatch('ia-render');
+        this.renderUmlJson(json);
+        this.rappid.graph.stopBatch('ia-render');
+        this.iaBusy = false; this.iaOpen = false;
+      } catch (e) {
+        console.error(e);
+        this.iaBusy = false;
+        this.iaError = 'La IA no devolvió un JSON válido.';
+      }
+    },
+    error: () => {
+      this.iaBusy = false;
+      this.iaError = 'Error al llamar a Gemini.';
+    }
+  });
+}
+
+
+
+
+/** "Categoría Producto" -> "categoriaProducto" (sin acentos, sin espacios) */
+private slugName(name: string): string {
+  return (name || '')
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^\w\s]/g, ' ')
+    .trim()
+    .replace(/\s+([a-zA-Z])/g, (_, c) => c.toUpperCase())
+    .replace(/^\w/, c => c.toLowerCase());
+}
+
+private fkFor(name: string): string {
+  const base = this.slugName(name);
+  return `${base}Id:int`;
+}
+
+/* finiaaaaaaaaaaaaaaaaaa */
+
+
+
+
+
+
+
+
+
+
 
 
 

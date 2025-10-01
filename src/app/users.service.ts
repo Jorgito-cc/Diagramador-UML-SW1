@@ -9,28 +9,21 @@ export class UsersService {
   private BASE_URL = "https://backend-sw1-production.up.railway.app"; // Cambia esto a tu URL base
   constructor(private http: HttpClient) { }
 
-  async login(email:string, password:string):Promise<any>{
-    const url = `${this.BASE_URL}/api/auth/login`;
-    try {
-      const response = await this.http.post<any>(url, { email, password }).toPromise();
-      return response;
-    } catch (error) {
-      throw error;
-    }
-  }
+ async login(email: string, password: string): Promise<any> {
+  const url = `${this.BASE_URL}/api/auth/login`;
+  return this.http.post<any>(url, { email, password }).toPromise();
+}
 
-  async register(userData:any, token:string):Promise<any>{
-    const url = `${this.BASE_URL}/api/auth/register`;
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`
-    });
-    try {
-      const response = await this.http.post<any>(url, userData, { headers }).toPromise();
-      return response;
-    } catch (error) {
-      throw error;
-    }
+async register(userData: any): Promise<any> {
+  const url = `${this.BASE_URL}/api/auth/register`;
+  try {
+    const response = await this.http.post<any>(url, userData).toPromise();
+    return response;
+  } catch (error) {
+    throw error;
   }
+}
+
 
   async getAllUsers(token:string):Promise<any>{
     const url = `${this.BASE_URL}/api/users/me`;
@@ -45,7 +38,7 @@ export class UsersService {
     }
   }
 
-  async getYourProfile(token:string):Promise<any>{
+ /*  async getYourProfile(token:string):Promise<any>{
     const url = `${this.BASE_URL}/api/users/me`;
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`
@@ -56,9 +49,9 @@ export class UsersService {
     } catch (error) {
       throw error;
     }
-  }
+  } */
 
-  async getUsersById(userId: string, token:string):Promise<any>{
+/*   async getUsersById(userId: string, token:string):Promise<any>{
     const url = `${this.BASE_URL}/adminuser/get-users/${userId}`;
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`
@@ -69,7 +62,7 @@ export class UsersService {
     } catch (error) {
       throw error;
     }
-  }
+  } */
 /* dasdfasdf */
   async deleteUser(userId: string, token:string):Promise<any>{
     const url = `${this.BASE_URL}/admin/delete/${userId}`;
@@ -84,7 +77,7 @@ export class UsersService {
     }
   }
 
-  async updateUSer(userId: string, userData: any, token:string):Promise<any>{
+ /*  async updateUSer(userId: string, userData: any, token:string):Promise<any>{
     const url = `${this.BASE_URL}/adminuser/update/${userId}`;
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`
@@ -97,7 +90,7 @@ export class UsersService {
       throw error;
     }
   }
-
+ */
   logOut():void{
     if (typeof localStorage !== 'undefined'){
       localStorage.removeItem('token');

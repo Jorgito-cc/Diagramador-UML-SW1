@@ -212,7 +212,7 @@ private appNS = appShapes.app;
       const [sourceElement, targetElement] = this.selectedElements;
 
       // Create the intermediate class (using `app.Clase`)
-      
+
 
       const intermediateClass = new (this.appNS as any).Clase({
 
@@ -488,7 +488,7 @@ private upsertClassByName(name: string, attrs?: any, pos?: {x:number,y:number}) 
     const kraw = String(r.kind || '').trim().toUpperCase().replace(/\s+/g,'_');
     let kind: any = kraw as any;
     if (!['ONE_TO_ONE','ONE_TO_MANY','MANY_TO_ONE','MANY_TO_MANY'].includes(kind)) {
-   
+
       const fm = (r.fromMult || '').trim();
       const tm = (r.toMult || '').trim();
       const sig = `${fm} ${tm}`.trim();
@@ -501,7 +501,7 @@ private upsertClassByName(name: string, attrs?: any, pos?: {x:number,y:number}) 
     return { from, to, kind };
   }
 
-  
+
   if (typeof r === 'string') {
     const s = r.trim().replace(/\s+/g, ' ');
     const m = s.match(/^(.+?)\s+([*1])\.\.\.?\s*([*1])\s+(.+)$/)  // tolerante con ".." o "..."
@@ -589,7 +589,7 @@ private renderUmlJson(model: any) {
   for (const rel of relations) this.drawRelation(rel, byName);
 }
 
-/* 
+/*
 onGenerateFromPrompt() {
   if (!this.iaPrompt.trim()) return;
   this.iaBusy = true; this.iaError = null;
@@ -879,7 +879,7 @@ private Long id;
 
   async generateEntityFiles(content: string) {
     const pomxml: string = `
-  <?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
 		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -1005,6 +1005,7 @@ private Long id;
     const applicationProperties: string = `
 
   spring.application.name=demo
+  server.port=9090
   spring.datasource.url=jdbc:postgresql://localhost:5432/demo
   spring.datasource.username=postgres
   spring.datasource.password=

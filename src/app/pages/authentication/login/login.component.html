@@ -31,17 +31,17 @@
               <input matInput type="password" [(ngModel)]="password" name="password" />
             </mat-form-field>
 
-            <div class="d-flex justify-content-between align-items-center mb-3">
+         <!--    <div class="d-flex justify-content-between align-items-center mb-3">
               <mat-checkbox color="primary">Recordar</mat-checkbox>
               <a href="#" class="small">¿Olvidaste tu contraseña?</a>
-            </div>
+            </div> -->
 
             <button mat-flat-button class="btn-gold w-100 mb-3">Iniciar sesión</button>
           </form>
 
           <div>
             <span>¿Nuevo aquí?</span>
-            <a [routerLink]="['/register']" class="fw-bold text-gold"> Regístrate</a>
+            <a [routerLink]="['/authentication/register']" class="fw-bold text-gold"> Regístrate</a>
           </div>
         </mat-card-content>
       </mat-card>

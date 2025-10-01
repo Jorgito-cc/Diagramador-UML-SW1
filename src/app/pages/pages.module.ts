@@ -19,6 +19,7 @@ import { AppDashboardComponent } from './dashboard/dashboard.component';
     NgApexchartsModule,
     RouterModule.forChild(PagesRoutes),
     TablerIconsModule.pick(TablerIcons),
+    
   ],
   exports: [TablerIconsModule],
 })

@@ -25,7 +25,7 @@ export const navItems: NavItem[] = [
     iconName: 'tooltip',
     route: '/ui-components/admin/usuarios',
   },
-  {
+/*   {
     displayName: 'Login',
     iconName: 'lock',
     route: '/authentication/login',
@@ -34,6 +34,6 @@ export const navItems: NavItem[] = [
     displayName: 'Register',
     iconName: 'user-plus',
     route: '/authentication/register',
-  },
+  }, */
 
 ];

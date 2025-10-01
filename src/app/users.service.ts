@@ -38,7 +38,7 @@ async register(userData: any): Promise<any> {
     }
   }
 
- /*  async getYourProfile(token:string):Promise<any>{
+  async getYourProfile(token:string):Promise<any>{
     const url = `${this.BASE_URL}/api/users/me`;
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`
@@ -49,7 +49,7 @@ async register(userData: any): Promise<any> {
     } catch (error) {
       throw error;
     }
-  } */
+  }
 
 /*   async getUsersById(userId: string, token:string):Promise<any>{
     const url = `${this.BASE_URL}/adminuser/get-users/${userId}`;
